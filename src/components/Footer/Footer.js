@@ -41,7 +41,6 @@ class Footer extends React.Component {
         >
           <div style={{ color: "white" }}>
             <div>
-              {" "}
               <a
                 href="https://github.com/juliapetrosyan"
                 rel="noopener noreferrer"
@@ -51,7 +50,6 @@ class Footer extends React.Component {
               </a>
             </div>
             <div>
-              {" "}
               <a
                 href="https://github.com/juliapetrosyan"
                 rel="noopener noreferrer"
@@ -61,7 +59,6 @@ class Footer extends React.Component {
               </a>
             </div>
             <div>
-              {" "}
               <a
                 href="https://github.com/juliapetrosyan"
                 rel="noopener noreferrer"

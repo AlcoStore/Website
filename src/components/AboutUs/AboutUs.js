@@ -65,7 +65,6 @@ class AboutUs extends React.Component {
               <div className="AboutUsContentDivContent">
                 <h4>Stepan Abgaryan</h4>
                 <span>
-                  {" "}
                   <FaRegCalendarAlt className="AboutUsContentDivDescIcons" /> 19
                   May 1994
                 </span>
@@ -122,9 +121,8 @@ class AboutUs extends React.Component {
               <div className="AboutUsContentDivContent">
                 <h4>Veronika Jaghinyan</h4>
                 <span>
-                  {" "}
-                  <FaRegCalendarAlt className="AboutUsContentDivDescIcons" /> DD
-                  MM YYYY
+                  <FaRegCalendarAlt className="AboutUsContentDivDescIcons" /> 31
+                  October 1994
                 </span>
                 <br />
                 <br />
@@ -133,7 +131,7 @@ class AboutUs extends React.Component {
                   <br />
                   <br />
                   <a
-                    href="https://www.youtube.com/"
+                    href="https://veronika-jaghinyan.github.io/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -149,14 +147,14 @@ class AboutUs extends React.Component {
                 <div className="AboutUsContentDivLinks">
                   <span>Follow us on:</span>
                   <a
-                    href="https://www.youtube.com/"
+                    href="https://github.com/veronika-jaghinyan"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <FaGithub className="AboutUsContentDivDescIcons AboutUsContentDivDescIcons1" />
                   </a>
                   <a
-                    href="https://www.youtube.com/"
+                    href="https://www.linkedin.com/in/veronika-jaghinyan-3743609b/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -179,9 +177,8 @@ class AboutUs extends React.Component {
               <div className="AboutUsContentDivContent">
                 <h4>Gevorg Mamikonyan</h4>
                 <span>
-                  {" "}
                   <FaRegCalendarAlt className="AboutUsContentDivDescIcons" />
-                  DD MM YYYY
+                  16 October 1991
                 </span>
                 <br />
                 <br />
@@ -206,7 +203,7 @@ class AboutUs extends React.Component {
                 <div className="AboutUsContentDivLinks">
                   <span>Follow us on:</span>
                   <a
-                    href="https://www.youtube.com/"
+                    href="https://github.com/Gev76"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -236,9 +233,8 @@ class AboutUs extends React.Component {
               <div className="AboutUsContentDivContent">
                 <h4>Julieta Petrosyan</h4>
                 <span>
-                  {" "}
-                  <FaRegCalendarAlt className="AboutUsContentDivDescIcons" /> DD
-                  MM YYYY
+                  <FaRegCalendarAlt className="AboutUsContentDivDescIcons" /> 04
+                  February 1997
                 </span>
                 <br />
                 <br />
@@ -247,7 +243,7 @@ class AboutUs extends React.Component {
                   <br />
                   <br />
                   <a
-                    href="https://www.youtube.com/</div>"
+                    href="https://www.youtube.com/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -263,14 +259,14 @@ class AboutUs extends React.Component {
                 <div className="AboutUsContentDivLinks">
                   <span>Follow us on:</span>
                   <a
-                    href="https://www.youtube.com/"
+                    href="https://github.com/JuliaPetrosyan"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <FaGithub className="AboutUsContentDivDescIcons AboutUsContentDivDescIcons1" />
                   </a>
                   <a
-                    href="https://www.youtube.com/"
+                    href="https://www.linkedin.com/in/julieta-petrosyan-137983189/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
