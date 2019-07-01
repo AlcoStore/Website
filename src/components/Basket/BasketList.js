@@ -1,0 +1,172 @@
+import React from "react";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import "../index.css";
+import fire from "../../Firebase/Fire";
+import BasketItem from "../Basket/BasketItem.js";
+import { Link } from "react-router-dom";
+import lcoLogo from "../Images/IcoLogo.png";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Button from "@material-ui/core/Button";
+import Footer from "../Footer/Footer";
+import MyAccount from "../MyAccount/MyAccount";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import {Redirect} from "react-router-dom";
+
+class BasketList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 1,
+      discount: false,
+      editedItem: this.props,
+      showEditModal: false,
+      totalPrice: 0,
+      basketItems: [],
+      check: true,
+      idBase: "",
+      user: null,
+      loader: true
+    };
+  }
+
+  authListener = () => {
+    fire.auth().onAuthStateChanged(user => {
+      if (user && user.emailVerified===true) {
+        this.setState({ user });
+        localStorage.setItem("user", user.uid);
+        this.getBasketItems();
+      } else {
+        this.setState({ user: null });
+        localStorage.removeItem("user");
+      }
+    });
+  };
+
+  getBasketItems = () => {
+    const db = fire.firestore();
+    db.collection("users")
+      .doc(fire.auth().currentUser.uid)
+      .collection("basket")
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          let { totalPrice } = this.state;
+          this.setState({
+            basketItems: [...this.state.basketItems, { ...doc.data() }],
+            totalPrice:
+              parseInt(totalPrice) +
+              parseInt(doc.data().price) * parseInt(doc.data().count),
+            idBase: doc.id,
+            check: false
+          });
+        });
+        this.setState({ loader: false });
+      });
+  };
+
+  componentDidMount() {
+    this.authListener();
+  }
+
+  RemoveItem = price => {
+    const { totalPrice } = this.state;
+    const checki = totalPrice - price === 0;
+    this.setState({
+      totalPrice: totalPrice - price,
+      check: checki
+    });
+  };
+
+  TotalChange = price => {
+    const { totalPrice } = this.state;
+    this.setState({
+      totalPrice: totalPrice + price
+    });
+  };
+
+  handleCheckout = () => {
+    const messaging = fire.messaging();
+    messaging
+      .requestPermission()
+      .then(() => {
+        console.log("permission");
+        return messaging.getToken();
+      })
+      .then(token => console.log(token))
+      .catch(() => console.log("error"));
+  };
+
+  render() {
+    const { basketItems, totalPrice, check, user } = this.state;
+    return (
+      <div className="main-wrap">
+        <AppBar position="static" className="HeaderContainerAppBar">
+          <Toolbar>
+            <div className="LogoForAlcoStoreContainer1">
+              <Link to="/">
+                <img
+                  src={lcoLogo}
+                  alt={lcoLogo}
+                  className="ImageForAlcoStoreContainer"
+                />
+              </Link>
+            </div>
+            <div style={{ position: "absolute", right: "0" }}>
+              {user ? <MyAccount className="SignInUpUserLinks" /> : null}
+            </div>
+          </Toolbar>
+        </AppBar>
+        <Toolbar />
+        {this.state.loader ? (
+          <div>
+            <CircularProgress />
+          </div>
+        ) : (
+          <div>
+            <div>
+              {basketItems.map((item, index) => {
+                return (
+                  <BasketItem
+                    key={index}
+                    {...item}
+                    onRemove={this.RemoveItem}
+                    onTotalChange={this.TotalChange}
+                  />
+                );
+              })}
+            </div>
+            <div className="EmptyBasket">
+              <Grid className="EmptyBasketGrid">
+                <Grid>
+                  <Paper className="EmptyBasketText">
+                    {" "}
+                    {check
+                      ? "Your basket is empty."
+                      : "Total Price: AMD " + totalPrice}
+                  </Paper>
+                </Grid>
+              </Grid>
+              {check ? null : (
+                <div className="checkoutBtn">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleCheckout}
+                  >
+                    Checkout
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        <Footer />
+        {user===null && <Redirect to='/'/>}
+      </div>
+    );
+  }
+}
+
+export default BasketList;
