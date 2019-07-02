@@ -1,6 +1,5 @@
 import React from "react";
 import AppBar from "@material-ui/core/AppBar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import fire from "../../Firebase/Fire";
@@ -31,44 +30,69 @@ class Footer extends React.Component {
     this.authListener();
   }
 
+  handleCatClick =name=> {
+    console.log(name)
+    const { onCatClick } = this.props;
+    onCatClick(name);
+  };
+
   render() {
+    const{handleClose} = this.props;
     return (
       <div className="footer">
         <AppBar
           position="static"
           color="default"
-          style={{ backgroundColor: "rgb(40, 40, 39)", height: "90px" }}
+          style={{ backgroundColor: "rgb(40, 40, 39)", height: "100%" }}
         >
-          <div style={{ color: "white" }}>
-            <div>
+          <div className='upperFooter'>
+            <div className='footerLinkNames'>
               <a
-                href="https://github.com/juliapetrosyan"
+                href="http://localhost:3000/about-us"
                 rel="noopener noreferrer"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", color: 'white' }}
               >
                 About Us
               </a>
             </div>
-            <div>
+            <div className='footerLinkNames'>
               <a
-                href="https://github.com/juliapetrosyan"
+                  href="http://localhost:3000/"
+                  rel="noopener noreferrer"
+                  style={{ cursor: "pointer", color: 'white'}}
+                  onClick={event =>
+                      handleClose(event, "All")
+                  }
+              >
+                All Products
+              </a>
+            </div>
+            <div className='footerLinkNames'>
+              <a
+                href="http://localhost:3000/"
                 rel="noopener noreferrer"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", color: 'white'}}
               >
                 Home
               </a>
             </div>
-            <div>
-              <a
-                href="https://github.com/juliapetrosyan"
+            <div  className='footerLinkNames'>
+              {!this.state.user ? (<a
+                href="http://localhost:3000/sign-in"
                 rel="noopener noreferrer"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", color: 'white' }}
               >
-                {this.state.user ? "Login" : "My Profile"}{" "}
-              </a>
+              Login
+              </a>) : (<a
+                href="http://localhost:3000/my-profile"
+                rel="noopener noreferrer"
+                style={{ cursor: "pointer", color: 'white' }}
+                >
+                My Profile
+                </a>)}
             </div>
           </div>
-            <div variant="h6" color="inherit" style={{ color: "white" }}>
+            <div variant="h6" color="inherit" style={{ color: "white", paddingBottom: '10px' }}>
               © {new Date().getFullYear()} All Rights Reserved. Design By
               AlcoStore.
             </div>

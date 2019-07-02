@@ -11,7 +11,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import Footer from "../Footer/Footer";
 import MyAccount from "../MyAccount/MyAccount";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import Loader from '../Loader';
 import {Redirect} from "react-router-dom";
 
 class BasketList extends React.Component {
@@ -31,9 +31,13 @@ class BasketList extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.authListener();
+  }
+
   authListener = () => {
     fire.auth().onAuthStateChanged(user => {
-      if (user && user.emailVerified===true) {
+      if (user && user.emailVerified) {
         this.setState({ user });
         localStorage.setItem("user", user.uid);
         this.getBasketItems();
@@ -66,9 +70,6 @@ class BasketList extends React.Component {
       });
   };
 
-  componentDidMount() {
-    this.authListener();
-  }
 
   RemoveItem = price => {
     const { totalPrice } = this.state;
@@ -99,7 +100,8 @@ class BasketList extends React.Component {
   };
 
   render() {
-    const { basketItems, totalPrice, check, user } = this.state;
+    const { basketItems, totalPrice, check, user, loader} = this.state;
+    console.log(user)
     return (
       <div className="main-wrap">
         <AppBar position="static" className="HeaderContainerAppBar">
@@ -114,15 +116,13 @@ class BasketList extends React.Component {
               </Link>
             </div>
             <div style={{ position: "absolute", right: "0" }}>
-              {user ? <MyAccount className="SignInUpUserLinks" /> : null}
+              {user && <MyAccount className="SignInUpUserLinks" /> }
             </div>
           </Toolbar>
         </AppBar>
         <Toolbar />
         {this.state.loader ? (
-          <div>
-            <CircularProgress />
-          </div>
+          <Loader/>
         ) : (
           <div>
             <div>
@@ -148,7 +148,7 @@ class BasketList extends React.Component {
                   </Paper>
                 </Grid>
               </Grid>
-              {check ? null : (
+              {!check &&
                 <div className="checkoutBtn">
                   <Button
                     variant="contained"
@@ -157,13 +157,11 @@ class BasketList extends React.Component {
                   >
                     Checkout
                   </Button>
-                </div>
-              )}
+                </div>}
             </div>
           </div>
         )}
         <Footer />
-        {user===null && <Redirect to='/'/>}
       </div>
     );
   }

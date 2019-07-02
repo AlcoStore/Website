@@ -13,6 +13,7 @@ import Categories from "./Categories";
 import fire from "../../Firebase/Fire.js";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer.js";
+import Loader from '../Loader'
 
 library.add(faMinus, faPlus, faCartPlus, faSearch, faBars, faUser);
 
@@ -24,7 +25,8 @@ class Home extends React.Component {
       categories: "",
       itemsobj: [],
       drinks: [],
-      basketitemcount: 0
+      basketitemcount: 0,
+      loader: true
     };
   }
 
@@ -42,7 +44,8 @@ class Home extends React.Component {
         querySnapshot.forEach(doc => {
           let { itemsobj } = this.state;
           this.setState({
-            itemsobj: [...itemsobj, { id: doc.id, ...doc.data() }]
+            itemsobj: [...itemsobj, { id: doc.id, ...doc.data() }],
+            loader: false
           });
         });
       });
@@ -56,7 +59,8 @@ class Home extends React.Component {
         querySnapshot.forEach(doc => {
           let { drinks } = this.state;
           this.setState({
-            drinks: [...drinks, { ...doc.data() }]
+            drinks: [...drinks, { ...doc.data() }],
+            loader: false
           });
         });
       });
@@ -64,7 +68,7 @@ class Home extends React.Component {
 
   authListener = () => {
     fire.auth().onAuthStateChanged(user => {
-      if (user) {
+      if (user && user.emailVerified) {
         this.setState({ user });
         localStorage.setItem("user", user.uid);
         // setTimeout(() => this.getBasketItem(), 3000);
@@ -84,7 +88,8 @@ class Home extends React.Component {
       .get()
       .then(querySnapshot => {
         this.setState({
-          basketitemcount: querySnapshot.docs.length
+          basketitemcount: querySnapshot.docs.length,
+          loader: false
         });
       });
   };
@@ -114,7 +119,8 @@ class Home extends React.Component {
       searchlist,
       itemsobj,
       drinks,
-      basketitemcount
+      basketitemcount,
+        loader
     } = this.state;
     return (
       <div className="HomeMainDiv main-wrap">
@@ -164,6 +170,7 @@ class Home extends React.Component {
               );
             })}
         </div>
+        {loader && <Loader/>}
         <Footer />
       </div>
     );

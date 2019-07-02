@@ -1,21 +1,21 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField/index";
 import Button from "@material-ui/core/Button/index";
-import fire from "../../Firebase/Fire.js";
+import fire from "../../Firebase/Fire";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import lcoLogo from "../Images/IcoLogo.png";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Footer from "../Footer/Footer";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import lcoLogo from '../Images/IcoLogo.png';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Footer from '../Footer/Footer'
+import Loader from '../Loader'
 
 library.add(faExclamationCircle);
 
@@ -37,8 +37,7 @@ class SignIn extends React.Component {
         "The password is invalid or the user does not have a password.",
       user: null,
       emailVerified: true,
-      redirectHome: false,
-      loader: false,
+      loader: false
     };
   }
 
@@ -59,22 +58,26 @@ class SignIn extends React.Component {
   }
 
   signIn(e) {
-    this.setState({loader: true})
     e.preventDefault();
+    this.setState({loader: true})
     fire
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(cred => {
         this.setState({
-          emailVerified: cred.user.emailVerified
-        });
-        this.setState({redirectHome: true, loader: false})
-      })
+          emailVerified: cred.user.emailVerified,
+        })
+        if(!cred.user.emailVerified){
+          fire.auth().signOut()
+          this.setState({loader:false})
+        }
+      }).then(()=> {this.setState({loader: false})})
       .catch(error => {
         this.setState({
           errorMessage: error,
           email: this.state.email,
-          password: ""
+          password: "",
+          loader: false
         });
       });
   }
@@ -87,42 +90,27 @@ class SignIn extends React.Component {
 
   changeRedirect() {
     this.setState({ redirect: true });
-  }
+  };
 
   render() {
-    const {
-      redirect,
-      email,
-      password,
-      errorMessage,
-      emailError1,
-      emailError2,
-      passwordError,
-      user,
-      emailVerified,
-        redirectHome
-    } = this.state;
-    if (user || redirectHome) {
+    const { redirect, email, password, errorMessage, emailError1, emailError2, passwordError, user, emailVerified, loader } = this.state;
+    if (user && user.emailVerified) {
       return <Redirect to="/" />;
     } else {
       return (
         <div className="SignInUpPageMain main-wrap">
           <AppBar position="static" className="HeaderContainerAppBar">
             <Toolbar>
-              <div className="LogoForAlcoStoreContainer1">
+              <div className='LogoForAlcoStoreContainer1'>
                 <Link to="/">
-                  <img
-                    src={lcoLogo}
-                    alt={lcoLogo}
-                    className="ImageForAlcoStoreContainer"
-                  />
+                  <img src={lcoLogo} alt={lcoLogo} className='ImageForAlcoStoreContainer' />
                 </Link>
               </div>
             </Toolbar>
           </AppBar>
           <Toolbar />
-          <div className="SignInCardDiv">
-            <Card className="SignInCard">
+          <div className='SignInCardDiv'>
+            <Card className='SignInCard'>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
                   Please, log in to enter your personal page
@@ -161,7 +149,7 @@ class SignIn extends React.Component {
                     value={password}
                   />
                 </div>
-                {errorMessage ? (
+                {errorMessage &&
                   <div>
                     <FontAwesomeIcon
                       icon="exclamation-circle"
@@ -170,9 +158,8 @@ class SignIn extends React.Component {
                     <span style={{ color: "red", marginTop: "0px" }}>
                       Invalid email or password.
                     </span>
-                  </div>
-                ) : null}
-                {!emailVerified ? (
+                  </div>}
+                {!emailVerified &&
                   <div>
                     <FontAwesomeIcon
                       icon="exclamation-circle"
@@ -181,8 +168,7 @@ class SignIn extends React.Component {
                     <span style={{ color: "red", marginTop: "0px" }}>
                       Please Verify Your Email.
                     </span>
-                  </div>
-                ) : null}
+                  </div>}
               </CardContent>
               <CardActions>
                 <Button
@@ -193,20 +179,14 @@ class SignIn extends React.Component {
                   href="#text-buttons"
                 >
                   Sign In
-                </Button>
-                <Button variant="outlined" onClick={this.changeRedirect}>
-                  Register
-                </Button>
+                  </Button>
+                <Button variant="outlined" onClick={this.changeRedirect}>Register</Button>
                 {redirect && <Redirect to="/sign-up" />}
               </CardActions>
             </Card>
+            {loader && <Loader/>}
           </div>
-          {this.state.loader ? (
-              <div>
-                <CircularProgress />
-              </div>
-          ) : null}
-          <Footer />
+          <Footer/>
         </div>
       );
     }

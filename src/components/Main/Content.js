@@ -8,7 +8,7 @@ import EditModal from "../ItemPopup/PopupWindow";
 import fire from "../../Firebase/Fire";
 import LoginPopup from "./LoginDialog";
 import { Redirect } from "react-router";
-import CircularProgress from '@material-ui/core/CircularProgress'
+import Loader from '../Loader'
 
 class Content extends React.Component {
   constructor(props) {
@@ -191,14 +191,6 @@ class Content extends React.Component {
     }
   };
 
-  handleLoader = () => {
-    if(!this.state.inBasket) {
-      this.setState({loader: true})
-    } else {
-      this.setState({loader: false})
-    }
-  }
-
   render() {
     const { id, name, category, price, image, volume } = this.state.editedItem;
     const {
@@ -269,9 +261,7 @@ class Content extends React.Component {
                 <FontAwesomeIcon icon="cart-plus" />
               </div>
             )}
-            {this.state.loader ? (<div>
-              <CircularProgress />
-            </div>) : null}
+            {this.state.loader && <Loader/>}
           </label>
         </CardActions>
         {showLogin ? <LoginPopup show={true} /> : null}

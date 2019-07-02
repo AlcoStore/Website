@@ -106,6 +106,7 @@ class Header extends React.Component {
       onSearch(searchlist);
     }
   };
+
   handleSearchClick = event => {
     if (event.keyCode === 13) {
       const { onSearch } = this.props;

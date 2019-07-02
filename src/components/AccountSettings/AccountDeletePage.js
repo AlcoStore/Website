@@ -24,7 +24,8 @@ class DeleteAccount extends React.Component {
       user: null,
       email: "",
       toMyProfile: false,
-      toHome: false
+      toHome: false,
+      loader: false
     };
   }
 
@@ -58,6 +59,7 @@ class DeleteAccount extends React.Component {
   };
 
   getUserData = () => {
+    this.setState({loader: true})
     const db = fire.firestore();
     db.collection("users")
       .doc(fire.auth().currentUser.uid)
@@ -65,7 +67,8 @@ class DeleteAccount extends React.Component {
       .then(db =>
         this.setState({
           email: db.data().email,
-          password: db.data().password
+          password: db.data().password,
+          loader: false
         })
       );
   };
@@ -78,13 +81,14 @@ class DeleteAccount extends React.Component {
     );
 
     user.reauthenticateWithCredential(credential).then(() => {
+      this.setState({loader: true})
       user.delete();
       const db = fire.firestore();
       db.collection("users")
         .doc(fire.auth().currentUser.uid)
         .delete();
       this.changeHome();
-    });
+    }).then (()=> {this.setState({loader: false})});
   };
 
   handleBack = () => {

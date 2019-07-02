@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import fire from "../../Firebase/Fire";
 import firebase from "firebase";
 import TextField from "@material-ui/core/TextField";
+import Loader from "../Loader";
 
 class PasswordChange extends React.Component {
   constructor(props) {
@@ -20,7 +21,8 @@ class PasswordChange extends React.Component {
       email: "",
       user: null,
       confirmed: false,
-      error: ""
+      error: "",
+      loader: false
     };
   }
 
@@ -48,6 +50,7 @@ class PasswordChange extends React.Component {
   };
 
   getUserData = () => {
+    this.setState({loader: true})
     const db = fire.firestore();
     db.collection("users")
       .doc(fire.auth().currentUser.uid)
@@ -55,7 +58,8 @@ class PasswordChange extends React.Component {
       .then(db =>
         this.setState({
           email: db.data().email,
-          password: db.data().password
+          password: db.data().password,
+          loader: false
         })
       );
   };
@@ -69,6 +73,7 @@ class PasswordChange extends React.Component {
   };
 
   changePassword = () => {
+    this.setState({loader: true})
     const user = fire.auth().currentUser;
     const credential = firebase.auth.EmailAuthProvider.credential(
       user.email,
@@ -76,7 +81,7 @@ class PasswordChange extends React.Component {
     );
     user.reauthenticateWithCredential(credential).then(() => {
       user.updatePassword(this.state.newPassword);
-    });
+    }).then(()=> {this.setState({loader: false})});
   };
 
   handleClose = () => {
@@ -99,7 +104,8 @@ class PasswordChange extends React.Component {
       passwordConf,
       newPasswordConf,
       confirmed,
-      error
+      error,
+        loader
     } = this.state;
     return (
       <div>
@@ -186,6 +192,7 @@ class PasswordChange extends React.Component {
             </Button>
           </DialogContent>
         </Dialog>
+        {loader && <Loader/>}
       </div>
     );
   }

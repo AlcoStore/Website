@@ -1,19 +1,19 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField/index";
 import Button from "@material-ui/core/Button/index";
-import fire from "../../Firebase/Fire.js";
+import fire from "../../Firebase/Fire";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import lcoLogo from "../Images/IcoLogo.png";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import Footer from "../Footer/Footer";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import lcoLogo from '../Images/IcoLogo.png';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import Footer from '../Footer/Footer';
+import Loader from "../Loader";
 
 class SignUp extends React.Component {
   constructor(props) {
@@ -51,7 +51,7 @@ class SignUp extends React.Component {
     this.setState({ redirect: true });
   }
 
-  getAge = birthDateString => {
+  getAge  = (birthDateString) => {
     var today = new Date();
     var birthDate = new Date(birthDateString);
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -60,19 +60,16 @@ class SignUp extends React.Component {
       age--;
     }
     return age;
-  };
+  }
 
   signUp(e) {
-    const { name, surname, age, number, email } = this.state;
-    this.setState({loader: true})
-
+    const {name, surname, age, number, email} = this.state;
+this.setState({loader: true})
     let ageValid = this.getAge(age) < 18 ? false : true;
     let nameValid = /^[a-zA-Z]+$/.test(name);
     let surnameValid = /^[a-zA-Z]+$/.test(surname);
-    let emailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(
-      email
-    );
-    let numberValidF = number.charAt(0) === "+" ? true : false;
+    let emailValid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+    let numberValidF = number.charAt(0) === '+' ? true : false;
     let numberValid = numberValidF && /^\+?[0-9]+$/.test(number);
 
     this.setState({
@@ -81,9 +78,9 @@ class SignUp extends React.Component {
       ageValid: ageValid,
       numberValid: numberValid,
       emailValid: emailValid
-    });
+    })
 
-    if (nameValid && surnameValid && ageValid && numberValid && emailValid) {
+    if(nameValid && surnameValid && ageValid && numberValid && emailValid) {
       e.preventDefault();
       fire
         .auth()
@@ -91,8 +88,7 @@ class SignUp extends React.Component {
         .then(cred => {
           const db = fire.firestore();
           cred.user.sendEmailVerification();
-          return db
-            .collection("users")
+          return db.collection("users")
             .doc(cred.user.uid)
             .set({
               name: this.state.name,
@@ -103,18 +99,19 @@ class SignUp extends React.Component {
               email: this.state.email,
               initials: this.state.name[0] + this.state.surname[0],
               password: this.state.password,
-              basket: []
             });
-          this.setState({loader: false})
-        })
-        .catch(error => {
-          this.setState({
-            errorMessage: error,
-            email: this.state.email,
-            password: "",
-            passwordConf: ""
-          });
+
+        }).then(() => {fire.auth().signOut()}).then(()=> {this.setState({loader: false})}).catch(error => {
+        this.setState({
+          errorMessage: error,
+          email: this.state.email,
+          password: "",
+          passwordConf: "",
+          loader: false
         });
+      });
+    } else {
+      this.setState({loader: false})
     }
   }
 
@@ -141,30 +138,11 @@ class SignUp extends React.Component {
   }
 
   render() {
-    const {
-      redirect,
-      email,
-      emailInUseError,
-      invalidEmailError,
-      password,
-      passwordError,
-      passwordConf,
-      errorMessage,
-      name,
-      surname,
-      age,
-      gender,
-      number,
-      user,
-      emailValid,
-      nameValid,
-      surnameValid,
-      ageValid,
-      numberValid
-    } = this.state;
+    const { redirect, email, emailInUseError, invalidEmailError, password, passwordError, passwordConf, errorMessage,
+      name, surname, age, gender, number, user, emailValid, nameValid, surnameValid, ageValid, numberValid, loader } = this.state;
     if (user && user.emailVerified) {
       return <Redirect to="/" />;
-    } else if (user && !user.emailVarified) {
+    } else if(user && !user.emailVerified) {
       return <Redirect to="/sign-in" />;
     } else {
       return (
@@ -172,20 +150,16 @@ class SignUp extends React.Component {
           <div className="SignInUpPageMain main-wrap">
             <AppBar position="static" className="HeaderContainerAppBar">
               <Toolbar>
-                <div className="LogoForAlcoStoreContainer1">
+                <div className='LogoForAlcoStoreContainer1'>
                   <Link to="/">
-                    <img
-                      src={lcoLogo}
-                      alt={lcoLogo}
-                      className="ImageForAlcoStoreContainer"
-                    />
+                    <img src={lcoLogo} alt={lcoLogo} className='ImageForAlcoStoreContainer' />
                   </Link>
                 </div>
               </Toolbar>
             </AppBar>
             <Toolbar />
-            <div className="SignInCardDiv">
-              <Card className="SignUpCard">
+            <div className='SignInCardDiv'>
+              <Card className='SignUpCard'>
                 <CardContent>
                   <Typography variant="h5" component="h2">
                     Registration
@@ -239,10 +213,10 @@ class SignUp extends React.Component {
                       id="outlined-select-currency-native"
                       select
                       label="Gender"
-                      value={gender}
+                      value = {gender}
                       onChange={e => this.handleInputChange(e, "gender")}
                       SelectProps={{
-                        native: true
+                        native: true,
                       }}
                       margin="normal"
                       variant="outlined"
@@ -319,7 +293,7 @@ class SignUp extends React.Component {
                     />
                   </div>
                 </CardContent>
-                <CardActions className="SignUpCardGridCardAction">
+                <CardActions  className="SignUpCardGridCardAction">
                   <div className="SignUpCardGridDiv">
                     <Button
                       variant="outlined"
@@ -343,49 +317,28 @@ class SignUp extends React.Component {
                     >
                       Confirm
                     </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={this.changeRedirect}
-                      fullWidth
-                      className="SignUpCardGridInput"
-                    >
+                    <Button variant="outlined" onClick={this.changeRedirect} fullWidth className="SignUpCardGridInput">
                       Go to Login
                     </Button>
                     {redirect && <Redirect to="/sign-in" />}
                   </div>
                 </CardActions>
                 <div className="SignUpCardGridDiv">
-                  {errorMessage === true ? (
-                    <div style={{ display: "flex" }}>
-                      <FontAwesomeIcon
-                        icon="exclamation-circle"
-                        style={{
-                          color: "red",
-                          marginLeft: "25px",
-                          marginRight: "15px",
-                          paddingTop: "5px"
-                        }}
-                      />
-                      <div
-                        style={{
-                          color: "red",
-                          marginTop: "0px",
-                          paddingBottom: "15px"
-                        }}
-                      >
-                        {errorMessage.message}
-                      </div>
-                    </div>
-                  ) : null}
-                </div>
-                {this.state.loader ? (
-                        <div>
-                          <CircularProgress />
+                  {errorMessage !== '' &&
+                      <div style={{ display: "flex"}}>
+                        <FontAwesomeIcon
+                          icon="exclamation-circle"
+                          style={{ color: "red", marginLeft: '25px', marginRight: "15px", paddingTop: '5px' }}
+                        />
+                        <div style={{ color: "red", marginTop: "0px", paddingBottom: '15px'}}>
+                          {errorMessage.message}
                         </div>
-                ) : null}
+                      </div>}
+                </div>
               </Card>
             </div>
-            <Footer />
+            {loader && <Loader/>}
+            <Footer/>
           </div>
         </form>
       );
